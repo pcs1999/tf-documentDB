@@ -33,6 +33,17 @@ resource "aws_security_group" "docdb" {
 
 }
 
-output "sg_out_id" {
-  value = aws_security_group.allow_tls.id
+
+
+resource "aws_docdb_cluster" "docdb" {
+  cluster_identifier      = "${var.env}-docdb_subnet_group"
+  engine_version =
+  engine                  = "docdb"
+  master_username         = data.aws_ssm_parameter.DB_ADMIN_USER.value
+  master_password         = data.aws_ssm_parameter.DB_ADMIN_PASS.value
+  db_subnet_group_name = aws_db_subnet_group.default.name
+  vpc_security_group_ids = [aws_security_group.docdb.id]
+  tags = merge (local.common_tags, { Name = "${var.env}-docdb_subnet_group" } )
+
+
 }
