@@ -1,4 +1,4 @@
-resource "aws_db_subnet_group" "subnet_group" {
+resource "aws_docdb_subnet_group" "subnet_group" {
 
   name = "${var.env}-docdb_subnet_group"
   subnet_ids = var.subnet_ids
@@ -42,7 +42,7 @@ resource "aws_docdb_cluster" "docdb" {
   master_username                         = data.aws_ssm_parameter.DB_ADMIN_USER.value
   master_password                         = data.aws_ssm_parameter.DB_ADMIN_PASS.value
   skip_final_snapshot                     = true
-  db_subnet_group_name                    = aws_db_subnet_group.subnet_group.name
+  db_subnet_group_name                    = aws_docdb_subnet_group.subnet_group.name
   vpc_security_group_ids                  = [aws_security_group.docdb.id]
 #  storage_encrypted = true
 #  kms_key_id = data.aws_kms_key.key.arn
