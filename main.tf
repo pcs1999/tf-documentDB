@@ -1,15 +1,15 @@
-resource "aws_docdb_subnet_group" "subnet_group" {
+resource "aws_docdb_subnet_group" "docdb_subnet_group" {
 
-  name = "${var.env}-docdb_subnet_group"
+  name       = "${var.env}-docdb_subnet_group"
   subnet_ids = var.subnet_ids
-  tags = merge (local.common_tags, { Name = "${var.env}-docdb_subnet_group" } )
+  tags       = merge (local.common_tags, { Name = "${var.env}-docdb_subnet_group" } )
 
 }
 
 resource "aws_security_group" "docdb" {
   name        = "${var.env}-docdb_security_group"
   description = "${var.env}-docdb_subnet_group"
-  vpc_id = var.vpc_id
+  vpc_id      = var.vpc_id
 
 
   ingress {
@@ -42,10 +42,10 @@ resource "aws_docdb_cluster" "docdb" {
   master_username                         = data.aws_ssm_parameter.DB_ADMIN_USER.value
   master_password                         = data.aws_ssm_parameter.DB_ADMIN_PASS.value
   skip_final_snapshot                     = true
-  db_subnet_group_name                    = aws_docdb_subnet_group.subnet_group.name
+  db_subnet_group_name                    = aws_docdb_subnet_group.docdb_subnet_group.name
   vpc_security_group_ids                  = [aws_security_group.docdb.id]
-  storage_encrypted = true
-  kms_key_id = data.aws_kms_key.key.arn
+  storage_encrypted                       = true
+  kms_key_id                              = data.aws_kms_key.key.arn
   tags = merge (local.common_tags, { Name = "${var.env}-docdb_subnet_group" } )
 
 
@@ -58,9 +58,6 @@ resource "aws_docdb_cluster_instance" "cluster_instances" {
   identifier         = "${var.env}-docdb-cluster-instance-${count.index +1 }"
   cluster_identifier = aws_docdb_cluster.docdb.id
   instance_class     = var.instance_class
-#  kms_key_id = data.aws_kms_key.key.arn
-#  storage_encrypted = true
-
-  tags = merge (local.common_tags, { Name = "${var.env}-docdb_cluster_instance" } )
+  tags               = merge (local.common_tags, { Name = "${var.env}-docdb_cluster_instance" } )
 
 }
